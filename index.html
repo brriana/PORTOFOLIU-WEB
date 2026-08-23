@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="ro" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briana Grigore • Web Design și Dezvoltare Front-End</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        // culorile alese pt tema
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        nude: {
+                            50: '#FAF7F2',
+                            100: '#F4ECE4',
+                            200: '#EBDCD0',
+                            300: '#DEC5B5',
+                            400: '#C8A692',
+                        },
+                        espresso: {
+                            900: '#1A1412',
+                            800: '#261E1B',
+                            700: '#3D312C',
+                            600: '#5A4A43',
+                            border: '#382B26',
+                        },
+                        rosewood: {
+                            DEFAULT: '#8C5345',
+                            dark: '#D49B8D',
+                            warm: '#B87D6E',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+
+        /* animatie reveal la scroll */
+        .reveal-node {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-node.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animated-line-container {
+            position: relative;
+            display: inline-block;
+        }
+        .animated-line-container::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0%;
+            height: 1.5px;
+            background-color: currentColor;
+            transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .animated-line-container:hover::after {
+            width: 100%;
+        }
+
+        /* efect hover butoane */
+        .btn-fill-animation {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: color 0.4s ease, border-color 0.4s ease;
+        }
+        .btn-fill-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #8C5345;
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .dark .btn-fill-animation::before {
+            background: #D49B8D;
+        }
+        .btn-fill-animation:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        .btn-fill-animation:hover {
+            color: #FAF7F2 !important;
+            border-color: transparent !important;
+        }
+
+        .bg-grain {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom-container img {
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .img-zoom-container:hover img {
+            transform: scale(1.04);
+        }
+
+        /* tranzitii meniu */
+        #nav-container {
+            transition: max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1), padding 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+        }
+        #nav-links-wrapper {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        @media (min-width: 768px) {
+            .nav-collapsed #nav-container {
+                max-width: 135px !important;
+                padding-left: 1.25rem !important;
+                padding-right: 1.25rem !important;
+                justify-content: center !important;
+            }
+            .nav-collapsed #nav-links-wrapper {
+                opacity: 0 !important;
+                pointer-events: none !important;
+                position: absolute !important;
+                transform: scale(0.95);
+            }
+            /* expandare meniu pe hover cand e restrans */
+            .nav-collapsed #nav-container:hover {
+                max-width: 64rem !important;
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
+                justify-content: space-between !important;
+            }
+            .nav-collapsed #nav-container:hover #nav-links-wrapper {
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                position: static !important;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-nude-50 text-espresso-900 dark:bg-espresso-900 dark:text-nude-50 font-sans antialiased selection:bg-rosewood selection:text-white relative bg-grain transition-colors duration-500 overflow-x-hidden">
+
+    <!-- ecran loader -->
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col justify-between p-8 sm:p-16 bg-espresso-900 text-nude-50 transition-transform duration-700 ease-in-out">
+        <div class="flex justify-between items-center text-xs tracking-widest uppercase text-nude-300 font-medium">
+            <span class="font-serif italic text-lg text-nude-200">Briana Grigore</span>
+            <span>Galați • România</span>
+        </div>
+
+        <div class="max-w-4xl">
+            <p id="loader-quote" class="font-serif text-3xl sm:text-5xl italic font-light leading-tight text-nude-100 mb-6">
+                Un design curat și direct vorbește de la sine.
+            </p>
+            <div class="w-full bg-espresso-800 h-[2px] relative overflow-hidden">
+                <div id="loader-progress-bar" class="absolute top-0 left-0 bottom-0 bg-rosewood-dark w-0 transition-all duration-300"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-end border-t border-espresso-800 pt-6">
+            <span data-i18n="loader-status" class="text-xs uppercase tracking-widest text-nude-300 font-medium">Pregătire Interfață...</span>
+            <span id="loader-counter" class="font-serif text-6xl sm:text-8xl font-light tracking-tighter text-rosewood-dark">00</span>
+        </div>
+    </div>
+
+    <!-- bara navigare -->
+    <header id="main-header" class="fixed top-4 sm:top-6 left-0 right-0 z-40 flex justify-center px-4">
+        <nav id="nav-container" class="w-full max-w-5xl bg-nude-50/90 dark:bg-espresso-800/90 backdrop-blur-md border border-nude-300/80 dark:border-espresso-border rounded-full px-5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between shadow-sm">
+            <a href="#" class="font-serif text-2xl font-bold tracking-tight text-espresso-900 dark:text-nude-50 hover:opacity-80 transition-opacity flex-shrink-0">
+                briana<span class="text-rosewood dark:text-rosewood-dark font-sans text-xl">.</span>
+            </a>
+
+            <!-- linkuri desktop -->
+            <div id="nav-links-wrapper" class="hidden md:flex items-center gap-8">
+                <div class="flex items-center gap-8 text-sm font-medium text-espresso-700 dark:text-nude-200">
+                    <a href="#portofoliu" data-i18n="nav-work" class="animated-line-container hover:text-espresso-900 dark:hover:text-white transition-colors py-1">Portofoliu</a>
+                    <a href="#despre" data-i18n="nav-about" class="animated-line-container hover:text-espresso-900 dark:hover:text-white transition-colors py-1">Despre</a>
+                    <a href="#tarife" data-i18n="nav-services" class="animated-line-container hover:text-espresso-900 dark:hover:text-white transition-colors py-1">Pachete & Prețuri</a>
+                    <a href="#livrare" data-i18n="nav-delivery" class="animated-line-container hover:text-espresso-900 dark:hover:text-white transition-colors py-1">Cum Livrez</a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="theme-toggle" aria-label="Schimbă tema" class="p-2 rounded-full border border-nude-300 dark:border-espresso-border bg-nude-100 dark:bg-espresso-700 hover:border-espresso-600 transition-colors">
+                        <i id="theme-icon-sun" data-lucide="sun" class="w-4 h-4 text-rosewood-dark hidden dark:block"></i>
+                        <i id="theme-icon-moon" data-lucide="moon" class="w-4 h-4 text-espresso-700 block dark:hidden"></i>
+                    </button>
+
+                    <button id="lang-switch" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-nude-300 dark:border-espresso-border hover:border-espresso-900 dark:hover:border-nude-100 transition-all bg-nude-100 dark:bg-espresso-700">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 text-rosewood dark:text-rosewood-dark"></i>
+                        <span id="lang-text" class="tracking-wider">RO</span>
+                    </button>
+
+                    <a href="#contact" data-i18n="nav-contact" class="btn-fill-animation border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 px-5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold transition-all">
+                        CONTACT
+                    </a>
+                </div>
+            </div>
+
+            <!-- butoane rapide mobil -->
+            <div class="flex md:hidden items-center gap-2">
+                <button id="mobile-theme-toggle" aria-label="Schimbă tema" class="p-2 rounded-full border border-nude-300 dark:border-espresso-border bg-nude-100 dark:bg-espresso-700">
+                    <i data-lucide="sun" class="w-4 h-4 text-rosewood-dark hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-4 h-4 text-espresso-700 block dark:hidden"></i>
+                </button>
+                <button id="mobile-lang-switch" class="px-2.5 py-1 text-xs font-semibold rounded-full border border-nude-300 dark:border-espresso-border bg-nude-100 dark:bg-espresso-700">
+                    <span id="mobile-lang-text">RO</span>
+                </button>
+                <button id="mobile-menu-btn" aria-label="Deschide Meniul" class="p-2 text-espresso-900 dark:text-nude-50">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- meniu mobil drawer -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-espresso-900/95 backdrop-blur-lg flex flex-col justify-between p-8 text-nude-50 transform translate-x-full transition-transform duration-400 ease-in-out md:hidden">
+        <div class="flex justify-between items-center border-b border-espresso-800 pb-6">
+            <span class="font-serif text-2xl font-bold tracking-tight">briana<span class="text-rosewood-dark">.</span></span>
+            <button id="mobile-menu-close" class="p-2 text-nude-200 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col gap-6 text-xl font-serif">
+            <a href="#portofoliu" class="mobile-nav-link hover:text-rosewood-dark transition-colors">Portofoliu</a>
+            <a href="#despre" class="mobile-nav-link hover:text-rosewood-dark transition-colors">Despre & Pasiune</a>
+            <a href="#tarife" class="mobile-nav-link hover:text-rosewood-dark transition-colors">Pachete & Prețuri</a>
+            <a href="#livrare" class="mobile-nav-link hover:text-rosewood-dark transition-colors">Cum Livrez</a>
+            <a href="#contact" class="mobile-nav-link hover:text-rosewood-dark transition-colors">Contact Direct</a>
+        </div>
+
+        <div class="pt-6 border-t border-espresso-800 text-xs text-nude-300 space-y-2 font-light">
+            <div>Galați, România</div>
+            <a href="tel:+40747953730" class="block font-medium text-nude-100">+40 747 953 730</a>
+        </div>
+    </div>
+
+    <!-- sectiune hero -->
+    <section class="pt-36 sm:pt-40 pb-16 sm:pb-20 px-6 sm:px-12 max-w-7xl mx-auto min-h-[90vh] flex flex-col justify-between relative">
+        <div class="absolute top-28 left-0 right-0 pointer-events-none select-none overflow-hidden opacity-5">
+            <span class="font-serif text-[18vw] leading-none font-bold text-espresso-900 dark:text-nude-50 block text-center tracking-tighter uppercase">
+                Studio
+            </span>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-10 sm:gap-12 items-center relative z-10 my-auto">
+            <div class="lg:col-span-7 space-y-6 sm:space-y-8 reveal-node">
+                <div class="inline-flex items-center gap-2.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-nude-200/80 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border text-xs font-medium text-espresso-700 dark:text-nude-200 tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-rosewood dark:bg-rosewood-dark animate-pulse"></span>
+                    <span data-i18n="hero-tag">Web Design și Dezvoltare Front-End • Galați</span>
+                </div>
+
+                <h1 data-i18n="hero-title" class="font-serif text-4xl sm:text-7xl lg:text-8xl font-normal leading-[1.05] sm:leading-[0.95] text-espresso-900 dark:text-nude-50 tracking-tight">
+                    Website-uri <br>
+                    <span class="italic font-light text-rosewood dark:text-rosewood-dark">sculptate</span> cu atenție la detalii.
+                </h1>
+
+                <p data-i18n="hero-desc" class="text-base sm:text-lg text-espresso-700 dark:text-nude-200 max-w-xl font-light leading-relaxed">
+                    Sunt Briana. Construiesc platforme web moderne, ultra-rapide și extrem de elegante pentru afaceri care vor să fie luate în serios. Fără platforme greoaie, doar cod curat și design orientat spre clienți.
+                </p>
+
+                <div class="p-4 rounded-2xl bg-nude-200/60 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border flex items-start gap-3.5 max-w-lg">
+                    <i data-lucide="info" class="w-5 h-5 text-rosewood dark:text-rosewood-dark flex-shrink-0 mt-0.5"></i>
+                    <p data-i18n="hero-hosting-notice" class="text-xs text-espresso-700 dark:text-nude-200 leading-relaxed font-light">
+                        <strong>Important:</strong> Eu creez și îți predau fișierele complete ale site-ului (HTML, CSS, JS). Domeniul web și găzduirea sunt achiziționate direct de tine (astfel rămâi 100% proprietar pe tot), iar eu te asist pas cu pas la publicare.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+                    <a href="#portofoliu" data-i18n="hero-cta-main" class="btn-fill-animation border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 px-8 py-4 rounded-full text-xs uppercase tracking-widest font-semibold text-center transition-all">
+                        Vezi Portofoliul
+                    </a>
+                    <a href="#tarife" data-i18n="hero-cta-secondary" class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-xs uppercase tracking-widest font-semibold text-espresso-700 dark:text-nude-200 hover:text-espresso-900 dark:hover:text-white animated-line-container transition-all text-center">
+                        <span>Pachete și Prețuri</span>
+                        <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 reveal-node">
+                <div class="rounded-3xl bg-nude-100 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border p-6 sm:p-8 shadow-xl space-y-6">
+                    <div class="h-44 sm:h-48 rounded-2xl bg-nude-200/70 dark:bg-espresso-700 border border-nude-300 dark:border-espresso-border p-6 flex flex-col justify-between">
+                        <span class="text-xs text-rosewood dark:text-rosewood-dark font-medium uppercase tracking-wider">Predare Directă</span>
+                        <div class="font-serif text-2xl sm:text-3xl italic text-espresso-900 dark:text-nude-50">100% Proprietatea Ta</div>
+                    </div>
+                    <div class="space-y-3.5 text-xs text-espresso-700 dark:text-nude-200 font-light">
+                        <div class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark"></i> Fișiere complete livrate în arhivă organizată</div>
+                        <div class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark"></i> Fără costuri lunare sau platforme blocate</div>
+                        <div class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark"></i> Asistență tehnică completă la încărcare</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-10 sm:pt-12 flex items-center justify-between border-t border-nude-300/80 dark:border-espresso-border text-xs text-espresso-600 dark:text-nude-300 reveal-node">
+            <span data-i18n="scroll-left">SCROLL PENTRU EXPLORARE</span>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-rosewood dark:bg-rosewood-dark"></span>
+                <span data-i18n="scroll-right">DISPONIBILĂ PENTRU PROIECTE NOI</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- proces livrare -->
+    <section id="livrare" class="py-20 sm:py-24 px-6 sm:px-12 border-y border-nude-300 dark:border-espresso-border bg-nude-100/60 dark:bg-espresso-800/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="max-w-2xl mb-12 sm:mb-16 reveal-node">
+                <span data-i18n="how-tag" class="text-xs uppercase tracking-widest text-rosewood dark:text-rosewood-dark mb-2 block font-semibold">Cum Funcționează Colaborarea</span>
+                <h2 data-i18n="how-title" class="font-serif text-3xl sm:text-5xl text-espresso-900 dark:text-nude-50">Ce primești concret de la mine</h2>
+                <p data-i18n="how-desc" class="text-sm text-espresso-700 dark:text-nude-200 mt-3 sm:mt-4 font-light leading-relaxed">
+                    Ca să fie totul clar de la început: eu sunt dezvoltatorul care îți scrie și îți proiectează site-ul.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
+                <div class="p-6 sm:p-8 rounded-3xl bg-nude-50 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border reveal-node">
+                    <div class="w-10 h-10 rounded-full bg-nude-200 dark:bg-espresso-700 flex items-center justify-center text-rosewood dark:text-rosewood-dark mb-6">
+                        <i data-lucide="layout" class="w-5 h-5"></i>
+                    </div>
+                    <h3 data-i18n="step1-title" class="font-serif text-xl sm:text-2xl text-espresso-900 dark:text-nude-50 mb-3">1. Crearea și Designul</h3>
+                    <p data-i18n="step1-desc" class="text-xs text-espresso-700 dark:text-nude-200 leading-relaxed font-light">
+                        Construiesc designul modern, textele structurate și funcționalitățile dorite, optimizate pentru telefon și calculator.
+                    </p>
+                </div>
+
+                <div class="p-6 sm:p-8 rounded-3xl bg-nude-50 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border reveal-node">
+                    <div class="w-10 h-10 rounded-full bg-nude-200 dark:bg-espresso-700 flex items-center justify-center text-rosewood dark:text-rosewood-dark mb-6">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                    </div>
+                    <h3 data-i18n="step2-title" class="font-serif text-xl sm:text-2xl text-espresso-900 dark:text-nude-50 mb-3">2. Predarea Fișierelor</h3>
+                    <p data-i18n="step2-desc" class="text-xs text-espresso-700 dark:text-nude-200 leading-relaxed font-light">
+                        Îți predau arhiva completă cu fișierele sursă (HTML, stiluri CSS, scripturi). Site-ul îți aparține în totalitate.
+                    </p>
+                </div>
+
+                <div class="p-6 sm:p-8 rounded-3xl bg-nude-50 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border reveal-node">
+                    <div class="w-10 h-10 rounded-full bg-nude-200 dark:bg-espresso-700 flex items-center justify-center text-rosewood dark:text-rosewood-dark mb-6">
+                        <i data-lucide="server" class="w-5 h-5"></i>
+                    </div>
+                    <h3 data-i18n="step3-title" class="font-serif text-xl sm:text-2xl text-espresso-900 dark:text-nude-50 mb-3">3. Domeniu și Găzduire</h3>
+                    <p data-i18n="step3-desc" class="text-xs text-espresso-700 dark:text-nude-200 leading-relaxed font-light">
+                        Domeniul (.ro / .com) și găzduirea sunt plătite direct de tine la furnizori de încredere, iar eu te ghidez gratuit cum să le urci online.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- indicatori rapizi -->
+    <section class="py-12 sm:py-16 border-b border-nude-300 dark:border-espresso-border bg-nude-50/50 dark:bg-espresso-900/50">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <div class="reveal-node">
+                <div class="text-[11px] sm:text-xs text-espresso-600 dark:text-nude-300 uppercase tracking-widest mb-1.5 font-medium">01 / PERFORMANȚĂ</div>
+                <div class="font-serif text-2xl sm:text-4xl text-espresso-900 dark:text-nude-50 mb-1">&lt; 1.0 Secunde</div>
+                <p data-i18n="stat-1" class="text-xs text-espresso-600 dark:text-nude-300">Timp mediu de încărcare pe telefon.</p>
+                <div class="w-full h-[1px] bg-nude-300 dark:bg-espresso-border mt-3 relative overflow-hidden">
+                    <div class="h-full bg-rosewood dark:bg-rosewood-dark w-full transform -translate-x-full hover:translate-x-0 transition-transform duration-700"></div>
+                </div>
+            </div>
+
+            <div class="reveal-node">
+                <div class="text-[11px] sm:text-xs text-espresso-600 dark:text-nude-300 uppercase tracking-widest mb-1.5 font-medium">02 / COD NATIV</div>
+                <div class="font-serif text-2xl sm:text-4xl text-espresso-900 dark:text-nude-50 mb-1">Fără WordPress</div>
+                <p data-i18n="stat-2" class="text-xs text-espresso-600 dark:text-nude-300">Construit nativ în HTML5, Tailwind și JS.</p>
+                <div class="w-full h-[1px] bg-nude-300 dark:bg-espresso-border mt-3 relative overflow-hidden">
+                    <div class="h-full bg-rosewood dark:bg-rosewood-dark w-full transform -translate-x-full hover:translate-x-0 transition-transform duration-700"></div>
+                </div>
+            </div>
+
+            <div class="reveal-node">
+                <div class="text-[11px] sm:text-xs text-espresso-600 dark:text-nude-300 uppercase tracking-widest mb-1.5 font-medium">03 / COMUNICARE</div>
+                <div class="font-serif text-2xl sm:text-4xl text-espresso-900 dark:text-nude-50 mb-1">Directă și Clară</div>
+                <p data-i18n="stat-3" class="text-xs text-espresso-600 dark:text-nude-300">Fără intermediari. Vorbești direct cu mine.</p>
+                <div class="w-full h-[1px] bg-nude-300 dark:bg-espresso-border mt-3 relative overflow-hidden">
+                    <div class="h-full bg-rosewood dark:bg-rosewood-dark w-full transform -translate-x-full hover:translate-x-0 transition-transform duration-700"></div>
+                </div>
+            </div>
+
+            <div class="reveal-node">
+                <div class="text-[11px] sm:text-xs text-espresso-600 dark:text-nude-300 uppercase tracking-widest mb-1.5 font-medium">04 / ANCORARE</div>
+                <div class="font-serif text-2xl sm:text-4xl text-espresso-900 dark:text-nude-50 mb-1">Piața Galați</div>
+                <p data-i18n="stat-4" class="text-xs text-espresso-600 dark:text-nude-300">Tarife corecte pentru afaceri locale.</p>
+                <div class="w-full h-[1px] bg-nude-300 dark:bg-espresso-border mt-3 relative overflow-hidden">
+                    <div class="h-full bg-rosewood dark:bg-rosewood-dark w-full transform -translate-x-full hover:translate-x-0 transition-transform duration-700"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- portofoliu proiecte -->
+    <section id="portofoliu" class="py-24 sm:py-32 px-6 sm:px-12 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-20 reveal-node">
+            <div>
+                <span data-i18n="port-tag" class="text-xs uppercase tracking-widest text-rosewood dark:text-rosewood-dark mb-2 sm:mb-3 block font-semibold">Proiecte Active</span>
+                <h2 data-i18n="port-title" class="font-serif text-3xl sm:text-6xl text-espresso-900 dark:text-nude-50">Portofoliu Selectat</h2>
+            </div>
+            <p data-i18n="port-desc" class="text-espresso-600 dark:text-nude-300 max-w-md text-sm leading-relaxed mt-3 md:mt-0 font-light">
+                Fiecare proiect reprezintă o soluție tehnică croită pe măsura brandului, de la arhitectura vizuală până la experiența de navigare.
+            </p>
+        </div>
+
+        <div class="space-y-16 sm:space-y-24">
+            <!-- Proiect 1: Alpine House -->
+            <div class="grid lg:grid-cols-12 gap-8 sm:gap-10 items-center reveal-node">
+                <div class="lg:col-span-7">
+                    <div class="img-zoom-container rounded-3xl bg-nude-200 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80" alt="Alpine House" class="w-full h-[320px] sm:h-[460px] object-cover">
+                    </div>
+                </div>
+                <div class="lg:col-span-5 space-y-4 sm:space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs px-3.5 py-1 rounded-full bg-nude-200 dark:bg-espresso-700 text-espresso-800 dark:text-nude-200 font-medium">Turism & Ospitalitate</span>
+                        <span class="text-xs text-rosewood dark:text-rosewood-dark font-medium">2026</span>
+                    </div>
+                    <h3 class="font-serif text-3xl sm:text-4xl text-espresso-900 dark:text-nude-50">Alpine House</h3>
+                    <p data-i18n="proj1-text" class="text-espresso-700 dark:text-nude-200 text-sm leading-relaxed font-light">
+                        Platformă minimalistă de prezentare pentru o unitate de cazare boutique. Design inspirat din publicațiile de arhitectură, axat pe imagini ample, încărcare ultra-rapidă și conversie directă prin telefon și WhatsApp.
+                    </p>
+                    <div class="pt-2 flex items-center justify-between">
+                        <span class="text-xs text-espresso-500 dark:text-nude-300">HTML5 / Tailwind / JS</span>
+                        <a href="#contact" class="animated-line-container text-xs font-semibold uppercase tracking-wider text-espresso-900 dark:text-nude-50 inline-flex items-center gap-1.5">
+                            <span data-i18n="view-project">VREAU UN SITE SIMILAR</span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proiect 2: degit.ro (cu preview live in cadru de browser) -->
+            <div class="grid lg:grid-cols-12 gap-8 sm:gap-10 items-center reveal-node">
+                <div class="lg:col-span-5 lg:order-1 order-2 space-y-4 sm:space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs px-3.5 py-1 rounded-full bg-nude-200 dark:bg-espresso-700 text-espresso-800 dark:text-nude-200 font-medium">Platformă Digitală & Tech</span>
+                        <span class="text-xs text-rosewood dark:text-rosewood-dark font-medium">2026</span>
+                    </div>
+                    <h3 class="font-serif text-3xl sm:text-4xl text-espresso-900 dark:text-nude-50">degit.ro</h3>
+                    <p data-i18n="proj2-text" class="text-espresso-700 dark:text-nude-200 text-sm leading-relaxed font-light">
+                        Platformă completă dedicată dezvoltării web moderne și soluțiilor digitale. Structură clară orientată pe prezentarea serviciilor de dezvoltare, viteză impecabilă de încărcare și optimizare avansată pentru conversie.
+                    </p>
+                    <div class="pt-2 flex items-center justify-between">
+                        <span class="text-xs text-espresso-500 dark:text-nude-300">HTML5 / Tailwind / JS</span>
+                        <a href="https://degit.ro" target="_blank" class="animated-line-container text-xs font-semibold uppercase tracking-wider text-espresso-900 dark:text-nude-50 inline-flex items-center gap-1.5">
+                            <span data-i18n="view-degit">VIZITEAZĂ DEGIT.RO</span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 lg:order-2 order-1">
+                    <div class="rounded-3xl bg-nude-200/90 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border overflow-hidden shadow-2xl transition-all">
+                        <!-- bara de browser -->
+                        <div class="bg-nude-300/60 dark:bg-espresso-700/80 px-4 py-3 flex items-center justify-between border-b border-nude-300 dark:border-espresso-border">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3 h-3 rounded-full bg-rosewood/40 dark:bg-rosewood-dark/40 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-nude-400 dark:bg-espresso-600 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-nude-400 dark:bg-espresso-600 inline-block"></span>
+                            </div>
+                            <div class="bg-nude-50/80 dark:bg-espresso-900/80 px-4 py-1 rounded-full text-[11px] text-espresso-700 dark:text-nude-200 font-sans tracking-wide flex items-center gap-1.5 border border-nude-300/40 dark:border-espresso-border">
+                                <i data-lucide="lock" class="w-3 h-3 text-rosewood dark:text-rosewood-dark"></i>
+                                <span>https://degit.ro</span>
+                            </div>
+                            <a href="https://degit.ro" target="_blank" class="text-espresso-600 dark:text-nude-300 hover:text-espresso-900 dark:hover:text-white" title="Deschide în tab nou">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                        
+                        <!-- container iframe live -->
+                        <div class="relative w-full h-[340px] sm:h-[420px] bg-nude-50 dark:bg-espresso-900 overflow-hidden group">
+                            <iframe 
+                                src="https://degit.ro" 
+                                title="degit.ro Live Preview" 
+                                class="w-full h-full border-0 pointer-events-auto"
+                                loading="lazy"
+                                sandbox="allow-scripts allow-same-origin allow-popups">
+                            </iframe>
+
+                            <a href="https://degit.ro" target="_blank" class="absolute bottom-4 right-4 bg-espresso-900/90 dark:bg-nude-50/90 text-nude-50 dark:text-espresso-900 px-4 py-2 rounded-full text-xs font-semibold backdrop-blur-md shadow-md hover:scale-105 transition-transform flex items-center gap-1.5 z-10">
+                                <span>Deschide Platforma</span>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- sectiune despre & rezultate olimpiada -->
+    <section id="despre" class="py-24 sm:py-32 px-6 sm:px-12 bg-espresso-900 text-nude-50 relative overflow-hidden">
+        <div class="max-w-5xl mx-auto grid lg:grid-cols-12 gap-10 sm:gap-12 items-center">
+            <div class="lg:col-span-5 reveal-node">
+                <span data-i18n="about-tag" class="text-xs uppercase tracking-widest text-rosewood-dark mb-3 sm:mb-4 block font-semibold">Pasiune & Performanță</span>
+                <h2 data-i18n="about-title" class="font-serif text-3xl sm:text-5xl font-normal leading-tight mb-6">
+                    Pasiune reală, <br>
+                    <span class="italic font-light text-nude-200">performanță dovedită</span>.
+                </h2>
+                
+                <div class="p-6 rounded-2xl bg-espresso-800 border border-espresso-700 space-y-3.5 text-xs font-medium">
+                    <div class="flex items-center justify-between text-nude-200">
+                        <span>Olimpiada Națională TIC</span>
+                        <span class="text-rosewood-dark">3 Ani La Rând • Premiată</span>
+                    </div>
+                    <div class="flex items-center justify-between text-nude-200">
+                        <span>Tip Proiect</span>
+                        <span>Passion Project Autentic</span>
+                    </div>
+                    <div class="flex items-center justify-between text-nude-200">
+                        <span>Locație</span>
+                        <span>Galați, România</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 space-y-5 sm:space-y-6 text-nude-200 font-light text-base leading-relaxed reveal-node">
+                <p data-i18n="about-p1">
+                    Sunt Briana Grigore, iar crearea de site-uri web este înainte de toate un <strong>passion project</strong> pentru mine. Pasiunea pentru tehnologie și programare m-a adus timp de <strong>3 ani consecutivi la etapa națională a Olimpiadei de Tehnologia Informației (TIC), unde am obținut premii</strong>.
+                </p>
+                <p data-i18n="about-p2">
+                    Nu folosesc platforme greoaie sau șabloane automate care încetinesc paginile. Fiecare linie de cod este scrisă de mână în HTML, Tailwind CSS și JavaScript, garantând o viteză excepțională, securitate nativă și o structură vizuală clară.
+                </p>
+                <p data-i18n="about-p3">
+                    Nu ai nevoie de cunoștințe tehnice: mă ocup de la zero de arhitectura paginii, adaptabilitatea completă pe mobil și pregătirea dosarului de fișiere pentru lansare.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- pachete si preturi -->
+    <section id="tarife" class="py-24 sm:py-32 px-6 sm:px-12 max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16 sm:mb-20 reveal-node">
+            <span data-i18n="pricing-tag" class="text-xs uppercase tracking-widest text-rosewood dark:text-rosewood-dark mb-2 sm:mb-3 block font-semibold">Transparență Totală</span>
+            <h2 data-i18n="pricing-title" class="font-serif text-3xl sm:text-6xl text-espresso-900 dark:text-nude-50 mb-3 sm:mb-4">Pachete și Tarife Standard</h2>
+            <p data-i18n="pricing-sub" class="text-espresso-600 dark:text-nude-300 text-sm font-light">Prețuri calibrate pentru piața locală din Galați. Plătești doar crearea și livrarea fișierelor.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 sm:gap-8">
+            <!-- Pachet 1 -->
+            <div class="bg-nude-50 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border rounded-3xl p-6 sm:p-10 flex flex-col justify-between hover:border-espresso-900 dark:hover:border-nude-100 transition-colors reveal-node">
+                <div class="space-y-5 sm:space-y-6">
+                    <span data-i18n="t1-tag" class="text-xs text-espresso-500 dark:text-nude-400 uppercase tracking-widest block font-semibold">PACHET EXPRESS</span>
+                    <h3 data-i18n="t1-name" class="font-serif text-2xl sm:text-3xl text-espresso-900 dark:text-nude-50">Landing Page</h3>
+                    <p data-i18n="t1-desc" class="text-xs text-espresso-600 dark:text-nude-300 leading-relaxed font-light">Ideal pentru lansări rapide, promovarea unui singur serviciu sau campanii locale.</p>
+                    
+                    <div class="py-4 border-y border-nude-300 dark:border-espresso-border">
+                        <span id="price-t1" class="font-serif text-3xl sm:text-4xl text-espresso-900 dark:text-nude-50">800 - 1.200</span>
+                        <span id="currency-t1" class="text-xs text-espresso-500 dark:text-nude-300"> RON</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-espresso-700 dark:text-nude-200 font-light">
+                        <div data-i18n="t1-f1" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Pagină unică de conversie</div>
+                        <div data-i18n="t1-f2" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Design responsive pentru telefon și tabletă</div>
+                        <div data-i18n="t1-f3" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Formular direct de contact și WhatsApp</div>
+                        <div data-i18n="t1-f4" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Livrare în 3-5 zile lucrătoare</div>
+                    </div>
+                </div>
+
+                <a href="#contact" data-i18n="choose-plan" class="mt-8 btn-fill-animation border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 text-center py-3.5 rounded-full text-xs uppercase tracking-widest font-semibold block transition-all">
+                    Alege Pachetul
+                </a>
+            </div>
+
+            <!-- Pachet 2 (Recomandat) -->
+            <div class="bg-nude-200/90 dark:bg-espresso-700 border-2 border-rosewood dark:border-rosewood-dark rounded-3xl p-6 sm:p-10 flex flex-col justify-between relative shadow-xl reveal-node">
+                <span data-i18n="t2-badge" class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-rosewood dark:bg-rosewood-dark text-white text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-widest">
+                    RECOMANDAT PENTRU FIRME
+                </span>
+
+                <div class="space-y-5 sm:space-y-6">
+                    <span data-i18n="t2-tag" class="text-xs text-rosewood dark:text-rosewood-dark uppercase tracking-widest block font-semibold">PACHET BUSINESS</span>
+                    <h3 data-i18n="t2-name" class="font-serif text-2xl sm:text-3xl text-espresso-900 dark:text-nude-50">Site Prezentare Completă</h3>
+                    <p data-i18n="t2-desc" class="text-xs text-espresso-700 dark:text-nude-200 leading-relaxed font-light">Soluția optimă pentru cabinete, ateliere, producție sau servicii din Galați.</p>
+                    
+                    <div class="py-4 border-y border-nude-300 dark:border-espresso-border">
+                        <span id="price-t2" class="font-serif text-3xl sm:text-4xl text-espresso-900 dark:text-nude-50">1.500 - 2.500</span>
+                        <span id="currency-t2" class="text-xs text-espresso-500 dark:text-nude-300"> RON</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-espresso-800 dark:text-nude-100 font-light">
+                        <div data-i18n="t2-f1" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Până la 5 pagini structurate</div>
+                        <div data-i18n="t2-f2" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Optimizare SEO tehnică și Google Maps</div>
+                        <div data-i18n="t2-f3" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Comutator limbă (Română / Engleză)</div>
+                        <div data-i18n="t2-f4" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Asistență tehnică la urcarea pe găzduire</div>
+                    </div>
+                </div>
+
+                <a href="#contact" data-i18n="choose-plan" class="mt-8 btn-fill-animation bg-rosewood dark:bg-rosewood-dark text-white border border-transparent text-center py-3.5 rounded-full text-xs uppercase tracking-widest font-semibold block transition-all shadow-md">
+                    Alege Pachetul
+                </a>
+            </div>
+
+            <!-- Pachet 3 -->
+            <div class="bg-nude-50 dark:bg-espresso-800 border border-nude-300 dark:border-espresso-border rounded-3xl p-6 sm:p-10 flex flex-col justify-between hover:border-espresso-900 dark:hover:border-nude-100 transition-colors reveal-node">
+                <div class="space-y-5 sm:space-y-6">
+                    <span data-i18n="t3-tag" class="text-xs text-espresso-500 dark:text-nude-400 uppercase tracking-widest block font-semibold">ABONAMENT LUNAR</span>
+                    <h3 data-i18n="t3-name" class="font-serif text-2xl sm:text-3xl text-espresso-900 dark:text-nude-50">Mentenanță și Suport</h3>
+                    <p data-i18n="t3-desc" class="text-xs text-espresso-600 dark:text-nude-300 leading-relaxed font-light">Administrare continuă pentru ca tu să te poți concentra pe afacerea ta.</p>
+                    
+                    <div class="py-4 border-y border-nude-300 dark:border-espresso-border">
+                        <span id="price-t3" class="font-serif text-4xl text-espresso-900 dark:text-nude-50">250 - 450</span>
+                        <span id="currency-t3" class="text-xs text-espresso-500 dark:text-nude-300"> RON / lună</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs text-espresso-700 dark:text-nude-200 font-light">
+                        <div data-i18n="t3-f1" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Actualizări de texte, poze și prețuri</div>
+                        <div data-i18n="t3-f2" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Monitorizare bună funcționare și securitate</div>
+                        <div data-i18n="t3-f3" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Backup de siguranță periodic</div>
+                        <div data-i18n="t3-f4" class="flex items-center gap-2.5"><i data-lucide="check" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i> Intervenție prioritară în maxim 24h</div>
+                    </div>
+                </div>
+
+                <a href="#contact" data-i18n="choose-plan" class="mt-8 btn-fill-animation border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 text-center py-3.5 rounded-full text-xs uppercase tracking-widest font-semibold block transition-all">
+                    Alege Pachetul
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- formular contact -->
+    <section id="contact" class="py-24 sm:py-32 px-6 sm:px-12 max-w-5xl mx-auto">
+        <div class="text-center mb-12 sm:mb-16 reveal-node">
+            <span data-i18n="contact-tag" class="text-xs uppercase tracking-widest text-rosewood dark:text-rosewood-dark mb-2 sm:mb-3 block font-semibold">Direct și Rapid</span>
+            <h2 data-i18n="contact-title" class="font-serif text-3xl sm:text-6xl text-espresso-900 dark:text-nude-50 mb-3 sm:mb-4">Să începem proiectul tău</h2>
+            <p data-i18n="contact-desc" class="text-espresso-600 dark:text-nude-300 text-sm font-light">Scrie-mi detaliile tale sau sună-mă direct pentru orice discuție.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8 sm:gap-10">
+            <!-- detalii rapide -->
+            <div class="lg:col-span-4 space-y-6 reveal-node">
+                <div class="bg-nude-100 dark:bg-espresso-800 p-6 sm:p-8 rounded-3xl border border-nude-300 dark:border-espresso-border space-y-6">
+                    <h3 class="font-serif text-2xl text-espresso-900 dark:text-nude-50">Contact Direct</h3>
+                    
+                    <div class="space-y-4 text-xs font-medium">
+                        <div>
+                            <span class="text-espresso-500 dark:text-nude-400 block mb-1 uppercase tracking-wider">Telefon și WhatsApp</span>
+                            <a href="tel:+40747953730" class="text-sm font-semibold text-espresso-900 dark:text-nude-50 hover:text-rosewood dark:hover:text-rosewood-dark transition-colors inline-flex items-center gap-2">
+                                <i data-lucide="phone" class="w-4 h-4 text-rosewood dark:text-rosewood-dark"></i>
+                                +40 747 953 730
+                            </a>
+                        </div>
+
+                        <div>
+                            <span class="text-espresso-500 dark:text-nude-400 block mb-1 uppercase tracking-wider">Email</span>
+                            <a href="mailto:briana.grigore30@gmail.com" class="text-sm font-semibold text-espresso-900 dark:text-nude-50 hover:text-rosewood dark:hover:text-rosewood-dark transition-colors inline-flex items-center gap-2 break-all">
+                                <i data-lucide="mail" class="w-4 h-4 text-rosewood dark:text-rosewood-dark flex-shrink-0"></i>
+                                briana.grigore30@gmail.com
+                            </a>
+                        </div>
+
+                        <div>
+                            <span class="text-espresso-500 dark:text-nude-400 block mb-1 uppercase tracking-wider">Locație</span>
+                            <span class="text-sm font-semibold text-espresso-900 dark:text-nude-50 inline-flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-rosewood dark:text-rosewood-dark"></i>
+                                Galați, România
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-nude-300 dark:border-espresso-border">
+                        <a href="https://wa.me/40747953730" target="_blank" class="w-full btn-fill-animation border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 py-3 rounded-full text-xs uppercase tracking-widest font-semibold block text-center transition-all">
+                            Mesaj pe WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- formular legat la formsubmit -->
+            <div class="lg:col-span-8 reveal-node">
+                <form action="https://formsubmit.co/briana.grigore30@gmail.com" method="POST" class="space-y-6 sm:space-y-8 bg-nude-100 dark:bg-espresso-800 p-6 sm:p-12 rounded-3xl border border-nude-300 dark:border-espresso-border shadow-sm">
+                    <input type="hidden" name="_subject" value="Cerere Nouă de Site Web • Portofoliu">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+
+                    <div class="grid md:grid-cols-2 gap-6 sm:gap-8">
+                        <div class="space-y-2">
+                            <label data-i18n="form-name" class="text-xs uppercase tracking-wider text-espresso-700 dark:text-nude-200 font-medium">Nume sau Nume Companie</label>
+                            <input type="text" name="nume_client" required class="w-full bg-nude-50 dark:bg-espresso-700 border-b border-nude-300 dark:border-espresso-border py-2.5 sm:py-3 px-3 text-sm text-espresso-900 dark:text-nude-50 focus:outline-none focus:border-espresso-900 dark:focus:border-white transition-colors">
+                        </div>
+                        <div class="space-y-2">
+                            <label data-i18n="form-contact" class="text-xs uppercase tracking-wider text-espresso-700 dark:text-nude-200 font-medium">Telefon sau Email</label>
+                            <input type="text" name="contact_client" required class="w-full bg-nude-50 dark:bg-espresso-700 border-b border-nude-300 dark:border-espresso-border py-2.5 sm:py-3 px-3 text-sm text-espresso-900 dark:text-nude-50 focus:outline-none focus:border-espresso-900 dark:focus:border-white transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label data-i18n="form-msg" class="text-xs uppercase tracking-wider text-espresso-700 dark:text-nude-200 font-medium">Detalii despre proiect sau afacere</label>
+                        <textarea name="mesaj" rows="4" required class="w-full bg-nude-50 dark:bg-espresso-700 border-b border-nude-300 dark:border-espresso-border py-2.5 sm:py-3 px-3 text-sm text-espresso-900 dark:text-nude-50 focus:outline-none focus:border-espresso-900 dark:focus:border-white transition-colors"></textarea>
+                    </div>
+
+                    <button type="submit" data-i18n="form-submit" class="btn-fill-animation w-full border border-espresso-900 dark:border-nude-200 text-espresso-900 dark:text-nude-50 py-3.5 sm:py-4 rounded-full text-xs uppercase tracking-widest font-semibold transition-all">
+                        Trimite Solicitarea pe Email
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- footer -->
+    <footer class="py-10 sm:py-12 px-6 sm:px-12 border-t border-nude-300 dark:border-espresso-border text-xs text-espresso-500 dark:text-nude-300">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="font-medium">
+                BRIANA GRIGORE • +40 747 953 730 • GALAȚI, RO
+            </div>
+            <div data-i18n="footer-copy">
+                &copy; 2026 Toate drepturile rezervate. Dezvoltare web dedicată.
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#portofoliu" class="animated-line-container hover:text-espresso-900 dark:hover:text-white">Portofoliu</a>
+                <a href="#tarife" class="animated-line-container hover:text-espresso-900 dark:hover:text-white">Tarife</a>
+                <a href="#contact" class="animated-line-container hover:text-espresso-900 dark:hover:text-white">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // timer bara de incarcare
+        const progressBar = document.getElementById('loader-progress-bar');
+        const counter = document.getElementById('loader-counter');
+        const loader = document.getElementById('loader');
+
+        let count = 0;
+        const loaderTimer = setInterval(() => {
+            count += 10;
+            if (count >= 100) {
+                count = 100;
+                clearInterval(loaderTimer);
+                setTimeout(() => {
+                    if (loader) {
+                        loader.style.transform = 'translateY(-100%)';
+                        setTimeout(() => { loader.style.display = 'none'; }, 700);
+                    }
+                }, 200);
+            }
+            if (progressBar) progressBar.style.width = count + '%';
+            if (counter) counter.textContent = count < 10 ? '0' + count : count;
+        }, 35);
+
+        // fallback daca se incarca mai greu
+        setTimeout(() => {
+            if (loader && loader.style.display !== 'none') {
+                loader.style.transform = 'translateY(-100%)';
+                setTimeout(() => { loader.style.display = 'none'; }, 700);
+            }
+        }, 1200);
+
+        // restrangere meniu la scroll pe desktop
+        let lastScrollY = window.scrollY;
+        const headerEl = document.getElementById('main-header');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            if (window.innerWidth >= 768) {
+                if (currentScrollY > 100 && currentScrollY > lastScrollY) {
+                    headerEl.classList.add('nav-collapsed');
+                } else if (currentScrollY < lastScrollY || currentScrollY <= 80) {
+                    headerEl.classList.remove('nav-collapsed');
+                }
+            } else {
+                headerEl.classList.remove('nav-collapsed');
+            }
+
+            lastScrollY = currentScrollY;
+        }, { passive: true });
+
+        // drawer mobil
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+            document.body.classList.add('overflow-hidden');
+        });
+
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+            document.body.classList.remove('overflow-hidden');
+        });
+
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.classList.remove('overflow-hidden');
+            });
+        });
+
+        // toggle tema intunecata
+        const themeBtn = document.getElementById('theme-toggle');
+        const mobileThemeBtn = document.getElementById('mobile-theme-toggle');
+        const htmlElement = document.documentElement;
+
+        function toggleTheme() {
+            htmlElement.classList.toggle('dark');
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
+            lucide.createIcons();
+        }
+
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        }
+
+        themeBtn.addEventListener('click', toggleTheme);
+        mobileThemeBtn.addEventListener('click', toggleTheme);
+
+        // observer pt animatii scroll
+        const observerOptions = { threshold: 0.08 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-node').forEach(node => revealObserver.observe(node));
+
+        // dictionar traduceri ro / en
+        const dictionary = {
+            ro: {
+                "nav-work": "Portofoliu",
+                "nav-about": "Despre",
+                "nav-services": "Pachete & Prețuri",
+                "nav-delivery": "Cum Livrez",
+                "nav-contact": "CONTACT",
+                "hero-tag": "Web Design și Dezvoltare Front-End • Galați",
+                "hero-title": "Website-uri <br> <span class='italic font-light text-rosewood dark:text-rosewood-dark'>sculptate</span> cu atenție la detalii.",
+                "hero-desc": "Sunt Briana. Construiesc platforme web moderne, ultra-rapide și extrem de elegante pentru afaceri care vor să fie luate în serios. Fără platforme greoaie, doar cod curat și design orientat spre clienți.",
+                "hero-hosting-notice": "<strong>Important:</strong> Eu creez și îți predau fișierele complete ale site-ului (HTML, CSS, JS). Domeniul web și găzduirea sunt achiziționate direct de tine (astfel rămâi 100% proprietar pe tot), iar eu te asist pas cu pas la publicare.",
+                "hero-cta-main": "Vezi Portofoliul",
+                "hero-cta-secondary": "Pachete și Prețuri",
+                "scroll-left": "SCROLL PENTRU EXPLORARE",
+                "scroll-right": "DISPONIBILĂ PENTRU PROIECTE NOI",
+                "how-tag": "Cum Funcționează Colaborarea",
+                "how-title": "Ce primești concret de la mine",
+                "how-desc": "Ca să fie totul clar de la început: eu sunt dezvoltatorul care îți scrie și îți proiectează site-ul.",
+                "step1-title": "1. Crearea și Designul",
+                "step1-desc": "Construiesc designul modern, textele structurate și funcționalitățile dorite, optimizate pentru telefon și calculator.",
+                "step2-title": "2. Predarea Fișierelor",
+                "step2-desc": "Îți predau arhiva completă cu fișierele sursă (HTML, stiluri CSS, scripturi). Site-ul îți aparține în totalitate.",
+                "step3-title": "3. Domeniu și Găzduire",
+                "step3-desc": "Domeniul (.ro / .com) și găzduirea sunt plătite direct de tine la furnizori de încredere, iar eu te ghidez gratuit cum să le urci online.",
+                "stat-1": "Timp mediu de încărcare pe telefon.",
+                "stat-2": "Construit nativ în HTML5, Tailwind și JS.",
+                "stat-3": "Fără intermediari. Vorbești direct cu mine.",
+                "stat-4": "Tarife corecte pentru afaceri locale.",
+                "port-tag": "Proiecte Active",
+                "port-title": "Portofoliu Selectat",
+                "port-desc": "Fiecare proiect reprezintă o soluție tehnică croită pe măsura brandului, de la arhitectura vizuală până la experiența de navigare.",
+                "proj1-text": "Platformă minimalistă de prezentare pentru o unitate de cazare boutique. Design inspirat din publicațiile de arhitectură, axat pe imagini ample, încărcare ultra-rapidă și conversie directă prin telefon și WhatsApp.",
+                "proj2-text": "Platformă completă dedicată dezvoltării web moderne și soluțiilor digitale. Structură clară orientată pe prezentarea serviciilor de dezvoltare, viteză impecabilă de încărcare și optimizare avansată pentru conversie.",
+                "view-project": "VREAU UN SITE SIMILAR",
+                "view-degit": "VIZITEAZĂ DEGIT.RO",
+                "about-tag": "Pasiune & Performanță",
+                "about-title": "Pasiune reală, <br><span class='italic font-light text-nude-200'>performanță dovedită</span>.",
+                "about-p1": "Sunt Briana Grigore, iar crearea de site-uri web este înainte de toate un <strong>passion project</strong> pentru mine. Pasiunea pentru tehnologie și programare m-a adus timp de <strong>3 ani consecutivi la etapa națională a Olimpiadei de Tehnologia Informației (TIC), unde am obținut premii</strong>.",
+                "about-p2": "Nu folosesc platforme greoaie sau șabloane automate care încetinesc paginile. Fiecare linie de cod este scrisă de mână în HTML, Tailwind CSS și JavaScript, garantând o viteză excepțională, securitate nativă și o structură vizuală clară.",
+                "about-p3": "Nu ai nevoie de cunoștințe tehnice: mă ocup de la zero de arhitectura paginii, adaptabilitatea completă pe mobil și pregătirea dosarului de fișiere pentru lansare.",
+                "pricing-tag": "Transparență Totală",
+                "pricing-title": "Pachete și Tarife Standard",
+                "pricing-sub": "Prețuri calibrate pentru piața locală din Galați. Plătești doar crearea și livrarea fișierelor.",
+                "t1-tag": "PACHET EXPRESS",
+                "t1-name": "Landing Page",
+                "t1-desc": "Ideal pentru lansări rapide, promovarea unui singur serviciu sau campanii locale.",
+                "t1-f1": "Pagină unică de conversie",
+                "t1-f2": "Design responsive pentru telefon și tabletă",
+                "t1-f3": "Formular direct de contact și WhatsApp",
+                "t1-f4": "Livrare în 3-5 zile lucrătoare",
+                "t2-badge": "RECOMANDAT PENTRU FIRME",
+                "t2-tag": "PACHET BUSINESS",
+                "t2-name": "Site Prezentare Completă",
+                "t2-desc": "Soluția optimă pentru cabinete, ateliere, producție sau servicii din Galați.",
+                "t2-f1": "Până la 5 pagini structurate",
+                "t2-f2": "Optimizare SEO tehnică și Google Maps",
+                "t2-f3": "Comutator limbă (Română / Engleză)",
+                "t2-f4": "Asistență tehnică la urcarea pe găzduire",
+                "t3-tag": "ABONAMENT LUNAR",
+                "t3-name": "Mentenanță și Suport",
+                "t3-desc": "Administrare continuă pentru ca tu să te poți concentra pe afacerea ta.",
+                "t3-f1": "Actualizări de texte, poze și prețuri",
+                "t3-f2": "Monitorizare bună funcționare și securitate",
+                "t3-f3": "Backup de siguranță periodic",
+                "t3-f4": "Intervenție prioritară în maxim 24h",
+                "choose-plan": "Alege Pachetul",
+                "contact-tag": "Direct și Rapid",
+                "contact-title": "Să începem proiectul tău",
+                "contact-desc": "Scrie-mi detaliile tale sau sună-mă direct pentru orice discuție.",
+                "form-name": "Nume sau Nume Companie",
+                "form-contact": "Telefon sau Email",
+                "form-msg": "Detalii despre proiect sau afacere",
+                "form-submit": "Trimite Solicitarea pe Email",
+                "loader-status": "Pregătire Interfață...",
+                "footer-copy": "© 2026 Toate drepturile rezervate. Dezvoltare web dedicată."
+            },
+            en: {
+                "nav-work": "Portfolio",
+                "nav-about": "About",
+                "nav-services": "Packages & Pricing",
+                "nav-delivery": "How I Deliver",
+                "nav-contact": "CONTACT",
+                "hero-tag": "Web Design & Front-End Development • Galați",
+                "hero-title": "Websites <br> <span class='italic font-light text-rosewood dark:text-rosewood-dark'>sculpted</span> with attention to detail.",
+                "hero-desc": "I am Briana. I build modern, ultra-fast, and highly elegant web platforms for businesses that want to be taken seriously. No bloated platforms, just clean code and conversion-driven design.",
+                "hero-hosting-notice": "<strong>Important:</strong> I design and deliver the full website source files (HTML, CSS, JS). Domain name and hosting are purchased directly by you (ensuring you keep 100% ownership), and I guide you step-by-step through uploading them online.",
+                "hero-cta-main": "Explore Portfolio",
+                "hero-cta-secondary": "Packages & Pricing",
+                "scroll-left": "SCROLL TO EXPLORE",
+                "scroll-right": "AVAILABLE FOR NEW PROJECTS",
+                "how-tag": "How Collaboration Works",
+                "how-title": "What you actually receive from me",
+                "how-desc": "To be 100% clear from day one: I am the developer crafting your interface and code.",
+                "step1-title": "1. Design & Development",
+                "step1-desc": "I create a bespoke modern design, well-structured copy, and snappy user experience optimized for phones and desktops.",
+                "step2-title": "2. File Handover",
+                "step2-desc": "I hand over the complete folder containing all clean source files (HTML, CSS styles, scripts). You own everything entirely.",
+                "step3-title": "3. Domain & Hosting",
+                "step3-desc": "Domain name and web hosting are paid directly by you to trusted providers, and I assist you for free on publishing the files.",
+                "stat-1": "Average mobile loading speed.",
+                "stat-2": "Built natively in HTML5, Tailwind & JS.",
+                "stat-3": "No middlemen. Direct channel with me.",
+                "stat-4": "Fair rates for local businesses.",
+                "port-tag": "Active Projects",
+                "port-title": "Selected Work",
+                "port-desc": "Each project represents a technical solution tailored to the brand, from visual architecture to user navigation.",
+                "proj1-text": "Showcase website for a boutique lodging property. Architecture magazine-inspired design focused on high-res visuals, sub-second speed, and direct WhatsApp contact for quick bookings.",
+                "proj2-text": "Full platform dedicated to modern web development and digital solutions. Clean structure focused on service presentation, flawless loading speed, and conversion optimization.",
+                "view-project": "I WANT A SIMILAR SITE",
+                "view-degit": "VISIT DEGIT.RO",
+                "about-tag": "Passion & Performance",
+                "about-title": "Pure passion, <br><span class='italic font-light text-nude-200'>proven performance</span>.",
+                "about-p1": "I am Briana Grigore, and creating websites is primarily a <strong>passion project</strong> for me. My commitment to technology and programming allowed me to participate for <strong>3 consecutive years in the National ICT Olympiad, earning national awards</strong>.",
+                "about-p2": "I refuse to use bloated WordPress builders that slow down your website. Every project is handcrafted in HTML, Tailwind CSS, and JavaScript, guaranteeing blazing speed, top security, and visual uniqueness.",
+                "about-p3": "You don't need technical knowledge: I handle everything from layout architecture to mobile optimization and file preparation for launch.",
+                "pricing-tag": "Total Transparency",
+                "pricing-title": "Packages & Standard Rates",
+                "pricing-sub": "Calibrated rates for local small and mid-sized businesses. You only pay for creation & file delivery.",
+                "t1-tag": "EXPRESS PACKAGE",
+                "t1-name": "Landing Page",
+                "t1-desc": "Ideal for fast launches, single product promotion, or local service campaigns.",
+                "t1-f1": "High-converting single page",
+                "t1-f2": "Responsive design for mobile and tablet",
+                "t1-f3": "Direct contact form & WhatsApp link",
+                "t1-f4": "Delivery within 3-5 business days",
+                "t2-badge": "RECOMMENDED FOR BUSINESS",
+                "t2-tag": "BUSINESS PACKAGE",
+                "t2-name": "Full Business Website",
+                "t2-desc": "Standard solution for local studios, clinics, workshops, or professional firms.",
+                "t2-f1": "Up to 5 structured pages",
+                "t2-f2": "Technical SEO & Google Maps setup",
+                "t2-f3": "Language Switcher (Romanian / English)",
+                "t2-f4": "Assistance for hosting deployment",
+                "t3-tag": "MONTHLY RETAINER",
+                "t3-name": "Maintenance & Support",
+                "t3-desc": "Ongoing technical oversight so you can focus entirely on your business operations.",
+                "t3-f1": "Content, image, and price updates",
+                "t3-f2": "Uptime and security monitoring",
+                "t3-f3": "Periodic safe data backups",
+                "t3-f4": "Priority 24h response time",
+                "choose-plan": "Select Package",
+                "contact-tag": "Direct & Fast",
+                "contact-title": "Let's start your project",
+                "contact-desc": "Send me your details or call me directly for any inquiries.",
+                "form-name": "Your Name / Business Name",
+                "form-contact": "Phone or Email",
+                "form-msg": "Project or business details",
+                "form-submit": "Send Email Request",
+                "loader-status": "Preparing Interface...",
+                "footer-copy": "© 2026 All rights reserved. Dedicated web development."
+            }
+        };
+
+        // conversie preturi la schimbarea limbii
+        const prices = {
+            ro: {
+                p1: "800 - 1.200", c1: " RON",
+                p2: "1.500 - 2.500", c2: " RON",
+                p3: "250 - 450", c3: " RON / lună"
+            },
+            en: {
+                p1: "160 - 240", c1: " €",
+                p2: "300 - 500", c2: " €",
+                p3: "50 - 90", c3: " € / month"
+            }
+        };
+
+        let currentLang = 'ro';
+        const langBtn = document.getElementById('lang-switch');
+        const mobileLangBtn = document.getElementById('mobile-lang-switch');
+        const langText = document.getElementById('lang-text');
+        const mobileLangText = document.getElementById('mobile-lang-text');
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ro' ? 'en' : 'ro';
+            const upper = currentLang.toUpperCase();
+            langText.textContent = upper;
+            mobileLangText.textContent = upper;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dictionary[currentLang][key]) {
+                    el.innerHTML = dictionary[currentLang][key];
+                }
+            });
+
+            document.getElementById('price-t1').textContent = prices[currentLang].p1;
+            document.getElementById('currency-t1').textContent = prices[currentLang].c1;
+            document.getElementById('price-t2').textContent = prices[currentLang].p2;
+            document.getElementById('currency-t2').textContent = prices[currentLang].c2;
+            document.getElementById('price-t3').textContent = prices[currentLang].p3;
+            document.getElementById('currency-t3').textContent = prices[currentLang].c3;
+
+            lucide.createIcons();
+        }
+
+        langBtn.addEventListener('click', toggleLanguage);
+        mobileLangBtn.addEventListener('click', toggleLanguage);
+    </script>
+</body>
+</html>
